@@ -22,4 +22,4 @@ class DatabaseClient:
             print(e)
 
 
-db_client = DatabaseClient()
+db = DatabaseClient()

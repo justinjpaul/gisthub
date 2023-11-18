@@ -5,13 +5,37 @@ import json
 import time
 import uuid
 
-from blueprints.activities import activities
-from db.db_client import db_client
+from blueprints.groups import groups
+from db.db_client import db
+
+from datetime import datetime, date
+from bson import ObjectId
+from flask.json import JSONEncoder
+from werkzeug.routing import BaseConverter
+
+
+class MongoJSONEncoder(JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        else:
+            return super().default(o)
+
+
+class ObjectIdConverter(BaseConverter):
+    def to_python(self, value):
+        return ObjectId(value)
+
+    def to_url(self, value):
+        return str(value)
 
 
 def create_app():
     app = Flask(__name__)
-    app.register_blueprint(activities, url_prefix="/api/v1/activities")
+    app.json_encoder = MongoJSONEncoder
+    app.url_map.converters["objectid"] = ObjectIdConverter
+
+    app.register_blueprint(groups, url_prefix="/api/v1/groups")
 
     # Error 404 handler
     @app.errorhandler(404)
@@ -27,6 +51,17 @@ def create_app():
     @app.errorhandler(401)
     def custom_401(error):
         return Response("API Key required.", 401)
+
+    @app.errorhandler(Exception)
+    def handle_exception(e: Exception):
+        """Return JSON instead of HTML for HTTP errors."""
+        # start with the correct headers and status code from the error
+        response = Response()
+        # replace the body with JSON
+        response.response = json.dumps({"msg": str(e)})
+        response.content_type = "application/json"
+        response.status = 500
+        return response
 
     @app.route("/version", methods=["GET"], strict_slashes=False)
     def version():
@@ -63,7 +98,7 @@ def create_app():
 
 
 app = create_app()
-db_client.connect()
+db.connect()
 
 if __name__ == "__main__":
     app = create_app()

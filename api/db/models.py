@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 class User(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    _id: str = Field(default_factory=uuid.uuid4)
     first_name: str
     last_name: str
     email: str
@@ -13,27 +13,27 @@ class User(BaseModel):
 
 
 class Group(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    _id: str = Field(default_factory=uuid.uuid4)
     name: str
-    users = List[User] = Field(default=[])
-    event_ids = List[str] = Field(default=[])
+    users: List[User] = Field(default=[])
+    event_ids: List[str] = Field(default=[])
 
 
 class Note(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    _id: str = Field(default_factory=uuid.uuid4)
     user_id: str
     object_key: str
     timestamp: datetime
 
 
 class Gist(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    _id: str = Field(default_factory=uuid.uuid4)
     object_key: str
     timestamp: datetime
 
 
 class Event(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    _id: str = Field(default_factory=uuid.uuid4)
     name: str
     start: datetime
     end: Optional[datetime] = Field(default=None)
