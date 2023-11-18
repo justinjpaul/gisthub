@@ -14,10 +14,9 @@ class DatabaseClient:
     def connect(self) -> None:
         logger.info("hello")
         uri = f"mongodb+srv://gisthub-api:{os.environ['MONGO_DB_PASSWORD']}@gisthub-cluster.xkmpwip.mongodb.net/?retryWrites=true&w=majority"
-        self.client = MongoClient(uri, server_api=ServerApi("1"))
+        self.client = MongoClient(uri, server_api=ServerApi("1"))["mhacks"]
 
         try:
-            self.client.admin.command("ping")
             print("Pinged your deployment. You successfully connected to MongoDB!")
         except Exception as e:
             print(e)
