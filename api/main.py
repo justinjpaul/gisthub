@@ -6,6 +6,7 @@ import time
 import uuid
 
 from blueprints.activities import activities
+from db.db_client import db_client
 
 
 def create_app():
@@ -62,8 +63,8 @@ def create_app():
 
 
 app = create_app()
+db_client.connect()
 
 if __name__ == "__main__":
-    #    app = create_app()
-    print(" Starting app...")
+    app = create_app()
     app.run(host="0.0.0.0", port=5050)
