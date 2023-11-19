@@ -19,6 +19,7 @@ from fixed_session import FixedSession
 from db.models import LoginInput, User
 import bcrypt
 from cloud_storage import storage_client
+from flask_cors import CORS
 
 
 class MongoJSONEncoder(JSONEncoder):
@@ -127,6 +128,7 @@ def create_app():
 
 
 app = create_app()
+CORS(app)
 db.connect()
 
 app.config["SESSION_PERMANENT"] = True  # this is flipped/broken lol

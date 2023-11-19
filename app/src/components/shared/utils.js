@@ -32,23 +32,27 @@ export const formatDate = (datetime) => {
 };
 
 // Helper function for making HTTP requests
-export async function fetchHelper(
+export async function fetchHelper({
   url,
   method = "GET",
-  headers = {},
-  data = null
-) {
+  headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type": "application/json",
+  },
+  body = null,
+}) {
+  console.log(body);
   try {
     const response = await fetch(url, {
       method: method,
       headers: headers,
-      body: data ? JSON.stringify(data) : null,
+      body: body ? JSON.stringify(body) : null,
     });
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
+    console.log(response);
     const responseData = await response.json();
     return responseData;
   } catch (error) {

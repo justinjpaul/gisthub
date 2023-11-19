@@ -5,13 +5,14 @@ import Home from "./components/pages/home/Home";
 import Group from "./components/pages/groups/Group";
 import Event from "./components/pages/events/Event";
 import NotFound from "./components/pages/notfound/NotFound";
+import Landing from "./components/pages/landing/Landing";
 
 function App() {
   return (
     <div id="main-container">
       <Router>
         <Routes>
-          {/* <Route path="/login" element={<login />} /> */}
+          <Route path="/login" element={<Landing />} />
           <Route path="/" element={<Home />} />
           <Route path="group/:name" element={<Group />} />
           <Route path="event/:name" element={<Event />} />
