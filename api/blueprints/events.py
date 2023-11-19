@@ -32,6 +32,17 @@ def get_event(id: str):
         )
         note.object_key = url
 
+    for gist in event.gists:
+        blob = bucket.blob(gist.blob_key)
+        url = blob.generate_signed_url(
+            version="v4",
+            expiration=timedelta(minutes=15),
+            method="GET",
+            service_account_email="api-account@gisthub.iam.gserviceaccount.com",
+            access_token=credentials.token,
+        )
+        gist.blob_key = url
+
     return jsonify(event.dict(by_alias=True))
 
 
@@ -121,7 +132,6 @@ def update_gist(event_id: ObjectId, new_note_id: ObjectId, local_filename: str):
     gist_raw = response.choices[0]
 
     gist_content = um_gpt.read_gpt_multi_output(gist_raw)
-    print(gist_content)
 
     gist_blob_key = f"gists/{str(event_id)}/{int(time.time())}.md"
     gist_local_file = gist_blob_key.replace("/", "-")
