@@ -1,11 +1,18 @@
 import uuid
-from pydantic import BaseModel, validator, Field
-from typing import Optional, List
+from pydantic import BaseModel as PydanticBaseModel, validator, Field, ConfigDict
+from typing import Optional, List, Any
 from datetime import datetime
+from bson import ObjectId
+from pydantic.fields import ModelField
+
+
+class BaseModel(PydanticBaseModel):
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class User(BaseModel):
-    _id: str = Field(default_factory=uuid.uuid4)
+    id: ObjectId = Field(default_factory=ObjectId, alias="_id")
     first_name: str
     last_name: str
     email: str
@@ -13,28 +20,28 @@ class User(BaseModel):
 
 
 class Group(BaseModel):
-    _id: str = Field(default_factory=uuid.uuid4)
+    id: ObjectId = Field(default_factory=ObjectId, alias="_id")
     name: str
     user_ids: List[str] = Field(default=[])
-    owner_id: str
+    owner_id: ObjectId
     event_ids: List[str] = Field(default=[])
 
 
 class Note(BaseModel):
-    _id: str = Field(default_factory=uuid.uuid4)
+    id: ObjectId = Field(default_factory=ObjectId, alias="_id")
     user_id: str
     object_key: str
     timestamp: datetime
 
 
 class Gist(BaseModel):
-    _id: str = Field(default_factory=uuid.uuid4)
+    id: ObjectId = Field(default_factory=ObjectId, alias="_id")
     object_key: str
     timestamp: datetime
 
 
 class Event(BaseModel):
-    _id: str = Field(default_factory=uuid.uuid4)
+    id: ObjectId = Field(default_factory=ObjectId, alias="_id")
     name: str
     start: datetime
     end: Optional[datetime] = Field(default=None)

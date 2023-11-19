@@ -15,7 +15,7 @@ from flask.json import JSONEncoder
 from werkzeug.routing import BaseConverter
 from fixed_session import FixedSession
 
-from db.models import LoginInput
+from db.models import LoginInput, User
 import bcrypt
 
 
@@ -38,7 +38,7 @@ class ObjectIdConverter(BaseConverter):
 def create_app():
     app = Flask(__name__)
     app.json_encoder = MongoJSONEncoder
-    app.url_map.converters["objectid"] = ObjectIdConverter
+    app.url_map.converters["_id"] = ObjectIdConverter
 
     app.register_blueprint(groups, url_prefix="/api/v1/groups")
     app.register_blueprint(users, url_prefix="/api/v1/users")
@@ -85,11 +85,10 @@ def create_app():
         login_request = LoginInput(**request.get_json())
         user = db.client["users"].find_one({"email": login_request.email})
         if user:
-            if bcrypt.checkpw(
-                login_request.password.encode(), user["password"].encode()
-            ):
-                session["user_id"] = user["_id"]
-                return jsonify(user), 200
+            user = User(**user)
+            if bcrypt.checkpw(login_request.password.encode(), user.password.encode()):
+                session["user_id"] = user.id
+                return jsonify(user.dict(by_alias=True)), 200
             else:
                 return jsonify({"error": "Invalid password"}), 400
         else:
@@ -128,7 +127,7 @@ db.connect()
 
 app.config["SESSION_PERMANENT"] = True  # this is flipped/broken lol
 app.config["SESSION_TYPE"] = "mongodb"
-app.config["SESSION_MONGODB"] = db.client
+app.config["SESSION_MONGODB"] = db.root_client
 app.config["SESSION_MONGODB_DB"] = "mhacks"
 app.config["SESSION_MONGODB_COLLECTION"] = "sessions"
 FixedSession(app)

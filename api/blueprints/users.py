@@ -20,7 +20,7 @@ def create_user():
         requested_user.password.encode(), bcrypt.gensalt()
     ).decode()
 
-    new_user = db.client["users"].insert_one(requested_user.dict())
+    new_user = db.client["users"].insert_one(requested_user.dict(by_alias=True))
     created_user = db.client["users"].find_one({"_id": new_user.inserted_id})
 
     return jsonify(created_user)

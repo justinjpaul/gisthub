@@ -14,9 +14,14 @@ groups = Blueprint(name="groups", import_name=__name__)
 
 @groups.route("/", methods=["POST"])
 def create_group():
-    request_body = Group(**request.get_json())
+    if not session.get("user_id"):
+        return jsonify({"error": "Unauthorized"}), 401
 
-    new_group = db.client["groups"].insert_one(request_body.dict())
+    body = request.get_json()
+    body["owner_id"] = session["user_id"]
+    requested_group = Group(**body)
+
+    new_group = db.client["groups"].insert_one(requested_group.dict(by_alias=True))
     created_group = db.client["groups"].find_one({"_id": new_group.inserted_id})
 
     return jsonify(created_group)
