@@ -1,9 +1,4 @@
 import { useParams } from "react-router-dom";
-
-import styles from "./group.module.css";
-import pageStyles from "../../shared/pages.module.css";
-
-import Background from "../../shared/background/Background";
 import EventContainer from "../../shared/container/EventContainer";
 import { useEffect, useState } from "react";
 import {
@@ -12,13 +7,28 @@ import {
   inFuture,
   fetchHelper,
 } from "../../shared/utils";
-import { Layout, Divider } from "antd";
+import { Divider, Button, Modal } from "antd";
+import { FileAddOutlined } from "@ant-design/icons";
+import PageLayout from "../../shared/PageLayout";
+import EventForm from "./EventForm";
 
 export default function Group() {
   const { id } = useParams();
-  const name = "hardcoded group";
   const [events, setEvents] = useState([]);
-  const { Header, Content } = Layout;
+  const [group, setGroup] = useState({});
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   useEffect(() => {
     if (id === undefined) {
@@ -36,7 +46,20 @@ export default function Group() {
           console.log("no access page");
         });
     };
+    const getGroupHelper = async () => {
+      fetchHelper({
+        url: `http://localhost:5050/api/v1/groups/${id}`,
+      })
+        .then((x) => {
+          console.log(x);
+          setGroup(x);
+        })
+        .catch(() => {
+          console.log("no access page");
+        });
+    };
     getEventsHelper();
+    getGroupHelper();
   }, [id]);
 
   const getCurrent = () => {
@@ -69,20 +92,31 @@ export default function Group() {
       }));
   };
 
-  return (
-    <>
-      <Background />
-
-      <Layout className={pageStyles["page-container"]}>
-        <Header className={pageStyles["page-header"]}>{name}</Header>
-        <Content>
-          <EventContainer name="Happening Now" events={getCurrent()} />
-          <Divider />
-          <EventContainer name="Past Events" events={getPast()} />
-          <Divider />
-          <EventContainer name="Upcoming Events" events={getFuture()} />
-        </Content>
-      </Layout>
-    </>
-  );
+  return PageLayout({
+    header: group.name !== undefined ? group.name : "",
+    content: (
+      <>
+        <div>
+          <Button type="primary" onClick={showModal}>
+            Add Event <FileAddOutlined />
+          </Button>
+          <Modal
+            // title="My Modal"
+            visible={isModalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={null}
+          >
+            <EventForm id={id} />
+          </Modal>
+        </div>
+        <Divider />
+        <EventContainer name="Happening Now" events={getCurrent()} />
+        <Divider />
+        <EventContainer name="Past Events" events={getPast()} />
+        <Divider />
+        <EventContainer name="Upcoming Events" events={getFuture()} />
+      </>
+    ),
+  });
 }

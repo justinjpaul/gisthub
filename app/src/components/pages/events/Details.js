@@ -2,15 +2,10 @@ import { Typography } from "antd";
 import styles from "./event.module.css";
 import DetailsContainer from "../../shared/container/DetailsContainer";
 
-export default function Details(id) {
+export default function Details({ studentNotes }) {
   const { Text } = Typography;
 
-  const studentNotes = [
-    { name: "justin's", filename: "/sample1.txt" },
-    { name: "joseph's", filename: "/sample2.txt" },
-    { name: "jist's", filename: "/sample.md" },
-  ];
-
+  console.log(studentNotes);
   return (
     <>
       <Text className={styles["date-component"]}>The Details</Text>

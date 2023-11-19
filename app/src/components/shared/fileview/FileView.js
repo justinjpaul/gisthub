@@ -20,7 +20,6 @@ export const useGetFileContent = (filename) => {
 
         const text = await response.text();
         setContent(text);
-        console.log(text);
       } catch (error) {
         console.error("Error fetching content:", error);
       }
