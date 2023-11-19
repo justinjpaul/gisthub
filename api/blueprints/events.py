@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 events = Blueprint(name="events", import_name=__name__)
 from cloud_storage import storage_client, credentials
 import time
+import threading
 
 # Create event is in Groups
 
@@ -36,13 +37,16 @@ def upload_note(event_id: str):
     if not session.get("user_id"):
         return jsonify({"error": "Unauthorized"}), 401
 
+    blob_name = f"notes/{session['user_id']}/{int(time.time())}.txt"
+    local_filename = blob_name.replace("/", "-")
+
     f = request.files["file"]
-    f.save("tmp.txt")
+    f.save(local_filename)
 
     bucket = storage_client.bucket("gisthub-files")
-    blob_name = f"notes/{session['user_id']}/{int(time.time())}.txt"
+
     blob = bucket.blob(blob_name)
-    blob.upload_from_filename("tmp.txt")
+    blob.upload_from_filename(local_filename)
 
     events = db.client["events"]
 
@@ -62,3 +66,15 @@ def upload_note(event_id: str):
         return jsonify({"error": "Event not updated"}), 400
 
     return jsonify(requested_note.dict(by_alias=True))
+
+
+def update_gist(local_filename: str):
+    # 1. pull current gpt log
+
+    # 2. send gpt prompt w/ log + new note
+
+    # 3. parse new log / gist -> upload both to gcs
+
+    # 4. create new Gist object and push to document
+
+    ...
