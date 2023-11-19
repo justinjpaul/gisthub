@@ -1,56 +1,82 @@
+"""Correct um gpt accessor"""
+
 import os
-import json
+from dotenv import load_dotenv
+from openai import AzureOpenAI
 
-import openai
+load_dotenv()
+
+SPLIT_KEY = "****END FIRST OUTPUT****"
+STARTING_PROMPT = f"""
+    I am about to send you two input streams. 
+    I want you to consider both of them and combine them and give me an output as a markdown file
+    """
 
 
-openai.api_type = "azure"
-openai.api_key = os.environ['UM_GPT_API_KEY']
+def read_file(filename):
+    try:
+        with open(filename, 'r') as file:
+            content = file.read()
+            return content
+    except FileNotFoundError:
+        print(f"File '{filename}' not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
-openai.api_base = 'https://api.umgpt.umich.edu/azure-openai-api/ptu'
-openai.api_version = '2023-03-15-preview'
+# Prepends system prompt
+# Formats user prompts
+def prepare_combine_query(messages):
+    return [
+        {"role": "system", "content": STARTING_PROMPT},
+        *[{"role": "user", "content": x} for x in messages]
+    ]
 
-try:
-    response = openai.ChatCompletion.create(
-        engine='gpt-4',
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "Who won the world series in 2020?"}
-        ]
+def query_gpt(messages):
+    client = AzureOpenAI(
+        azure_endpoint='https://api.umgpt.umich.edu/azure-openai-api/ptu',
+        api_key=os.getenv("UM_GPT_API_KEY"),  
+        api_version="2023-03-15-preview"
     )
 
-    # print the response
-    print(response['choices'][0]['message']['content'])
+    responses = client.chat.completions.create(
+        model = "gpt-4",
+        messages = messages
+    )
 
-except openai.error.APIError as e:
-    # Handle API error here, e.g. retry or log
-    print(f"OpenAI API returned an API Error: {e}")
+    return responses
 
-except openai.error.AuthenticationError as e:
-    # Handle Authentication error here, e.g. invalid API key
-    print(f"OpenAI API returned an Authentication Error: {e}")
+# Singular response to a message
+def read_gpt_multi_output(response):
+    # Assumes that only ones with multioutput exist
+    try:
+        summary = response.message.content.strip()
+        return summary
+        
+    except Exception as e:
+        raise e
 
-except openai.error.APIConnectionError as e:
-    # Handle connection error here
-    print(f"Failed to connect to OpenAI API: {e}")
+def create_file(filename, data):
+    with open(filename, 'w+') as f:
+        f.write(data)
 
-except openai.error.InvalidRequestError as e:
-    # Handle connection error here
-    print(f"Invalid Request Error: {e}")
 
-except openai.error.RateLimitError as e:
-    # Handle rate limit error
-    print(f"OpenAI API request exceeded rate limit: {e}")
+def main():
+    f1 = "eecs281_1.txt"
 
-except openai.error.ServiceUnavailableError as e:
-    # Handle Service Unavailable error
-    print(f"Service Unavailable: {e}")
+    f_text = read_file(f1)
+    sample2 = "the big o complexity of quicksort is nlogn. the big o complexity of radix sort is o(n)"
 
-except openai.error.Timeout as e:
-    # Handle request timeout
-    print(f"Request timed out: {e}")
+    messages = prepare_combine_query([f_text, sample2])
+    response = query_gpt(messages)
+    print('post query')
+    
+    x = response.choices[0]
+    summary = read_gpt_multi_output(x)
+    
+    create_file('summary.md', summary)
+    
 
-except:
-    # Handles all other exceptions
-    print("An exception has occured.")
-
+if __name__ == '__main__':
+    main()
+    
+    

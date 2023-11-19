@@ -1,0 +1,77 @@
+# Data Structures and Algorithms Notes
+
+## Data Structures
+
+### Arrays
+- Collection of elements, each identified by an index or key.
+- Access time: O(1).
+- Insertion/Deletion time: O(n).
+
+### Linked Lists
+- Collection of nodes, where each node contains data and a reference/link to the next node.
+- Singly linked list: Each node points to the next node.
+- Doubly linked list: Each node points to both the next and the previous node.
+
+### Stacks
+- Collection of elements with Last In, First Out (LIFO) order.
+- Operations: push (add), pop (remove).
+
+### Queues
+- Collection of elements with First In, First Out (FIFO) order.
+- Operations: enqueue (add), dequeue (remove).
+
+### Trees
+- Hierarchical data structure with a root, nodes, and leaves.
+- Binary Tree: Each node has at most two children.
+- Binary Search Tree (BST): Left child < parent < right child.
+
+### Heaps
+- Complete binary tree.
+- Min Heap: Each parent node has a value less than or equal to its children.
+- Max Heap: Each parent node has a value greater than or equal to its children.
+
+### Hash Tables
+- Data structure that maps keys to values.
+- O(1) average time complexity for insertion, deletion, and retrieval.
+
+## Algorithms
+
+### Sorting Algorithms
+
+#### Bubble Sort
+- Compare and swap adjacent elements until the list is sorted.
+
+#### Selection Sort
+- Select the smallest (or largest) element and swap it with the first unsorted element.
+
+#### Insertion Sort
+- Build a sorted list by iteratively inserting elements into their correct position.
+
+#### Merge Sort
+- Divide the array into two halves, recursively sort each half, and then merge them.
+
+#### Quick Sort
+- Choose a pivot, partition the array into elements less than the pivot and elements greater than the pivot, and recursively sort the subarrays.
+
+### Searching Algorithms
+
+#### Linear Search
+- Iterate through each element until the target is found.
+
+#### Binary Search
+- Divide and conquer approach on a sorted array.
+
+### Graph Algorithms
+
+#### Depth-First Search (DFS)
+- Explore as far as possible along each branch before backtracking.
+
+#### Breadth-First Search (BFS)
+- Explore all the vertices of a graph level by level.
+
+### Dynamic Programming
+- Solve problems by breaking them down into smaller overlapping subproblems.
+- Store solutions to subproblems to avoid redundant computation.
+
+### Greedy Algorithms
+- Make locally optimal choices at each stage to find the global optimum.
