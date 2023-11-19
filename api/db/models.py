@@ -30,6 +30,7 @@ class Group(BaseModel):
 class Note(BaseModel):
     id: ObjectId = Field(default_factory=ObjectId, alias="_id")
     user_id: ObjectId
+    author_name: str
     object_key: str
     timestamp: datetime
 

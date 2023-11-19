@@ -91,6 +91,7 @@ def create_app():
             user = User(**user)
             if bcrypt.checkpw(login_request.password.encode(), user.password.encode()):
                 session["user_id"] = user.id
+                session["name"] = user.first_name + " " + user.last_name
                 return jsonify(user.dict(by_alias=True)), 200
             else:
                 return jsonify({"error": "Invalid password"}), 400
