@@ -30,3 +30,30 @@ export const formatDate = (datetime) => {
 
   return formattedDate;
 };
+
+// Helper function for making HTTP requests
+export async function fetchHelper(
+  url,
+  method = "GET",
+  headers = {},
+  data = null
+) {
+  try {
+    const response = await fetch(url, {
+      method: method,
+      headers: headers,
+      body: data ? JSON.stringify(data) : null,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    // Handle any errors that occurred during the fetch
+    console.error("Fetch error:", error.message);
+    throw error;
+  }
+}

@@ -1,7 +1,11 @@
-.page-container {
+.page-container-80 {
     width: 80vw;
     margin: 0 auto;
-    background-color:rgba(0,0,0,0);
+}
+
+.page-container, .page-container-80 {
+    background:rgba(0,0,0,0) !important;
+    
 }
 
 .page-header {
@@ -10,8 +14,24 @@
     font-size: 5em;
     /* border-top-left-radius: 1em;
     border-top-right-radius: 1em; */
-    margin-block-start: 1em !important;
+    /* margin-block-start: 1em !important; */
     margin-block-end: .3em;
 
     background-color:rgba(0,0,0,0);
 }
+
+@keyframes typing {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: 100%; 
+    }
+  }
+  
+  .typing-effect {
+    justify-self: center;
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 3s steps(60) forwards 1; 
+  }
