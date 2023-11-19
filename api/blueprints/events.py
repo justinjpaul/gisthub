@@ -6,6 +6,8 @@ from db.db_client import db
 
 events = Blueprint(name="events", import_name=__name__)
 
+# Create event is in Groups
+
 
 @events.route("/<id>", methods=["GET"])
 def get_group(id: str):

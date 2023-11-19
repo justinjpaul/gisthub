@@ -22,9 +22,9 @@ class User(BaseModel):
 class Group(BaseModel):
     id: ObjectId = Field(default_factory=ObjectId, alias="_id")
     name: str
-    user_ids: List[str] = Field(default=[])
+    user_ids: List[ObjectId] = Field(default=[])
     owner_id: ObjectId
-    event_ids: List[str] = Field(default=[])
+    event_ids: List[ObjectId] = Field(default=[])
 
 
 class Note(BaseModel):

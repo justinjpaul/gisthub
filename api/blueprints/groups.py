@@ -30,6 +30,9 @@ def get_group(id: str):
 
 @groups.route("/<group_id>/events", methods=["POST"])
 def create_event(group_id: str):
+    if not session.get("user_id"):
+        return jsonify({"error": "Unauthorized"}), 401
+
     groups = db.client["groups"]
     events = db.client["events"]
 
@@ -47,3 +50,34 @@ def create_event(group_id: str):
         return jsonify({"error": "Group not updated"}), 400
 
     return jsonify(created_event.dict(by_alias=True))
+
+
+@groups.route("/<group_id>/events", methods=["GET"])
+def get_events(group_id: str):
+    if not session.get("user_id"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    group_id = ObjectId(group_id)
+    groups = db.client["groups"]
+    events = db.client["events"]
+
+    try:
+        group = Group(**groups.find_one({"_id": group_id}))
+    except:
+        return jsonify({"error": "group not found"}), 404
+
+    group_events = events.find({"_id": {"$in": group.event_ids}})
+
+    resp = []
+    for raw_event in group_events:
+        event = Event(**raw_event)
+        did_contribute = False
+        for note in event.notes:
+            if note.user_id == session["user_id"]:
+                did_contribute = True
+                break
+        serialized_event = event.dict(by_alias=True, exclude={"gists", "notes"})
+        serialized_event["did_contribute"] = did_contribute
+        resp.append(serialized_event)
+
+    return jsonify({"events": resp})
