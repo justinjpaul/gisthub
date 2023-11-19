@@ -18,26 +18,33 @@ const MyUploadButton = ({ id }) => {
 
   return (
     <Upload {...props}>
-      <Button icon={<UploadOutlined />}>Add New Event</Button>
+      <Button icon={<UploadOutlined />}>Add Note</Button>
     </Upload>
   );
 };
 
-export const DateComponent = ({ id, date }) => {
+export const DateComponent = ({ id, date1, date2 }) => {
   const { Text } = Typography;
-
-  console.log(date);
   return (
-    date && (
-      <Flex className={styles["date-component"]} justify="space-between">
-        {/* <Text className={styles["date-component"]}>{name}</Text> */}
-        <MyUploadButton id={id} />
+    <Flex className={styles["date-component"]} justify="space-between">
+      {/* <Text className={styles["date-component"]}>{name}</Text> */}
+      <MyUploadButton id={id} />
 
-        <Space align="center" size={16}>
-          <CalendarOutlined />
-          <Text className={styles["date-component"]}>{formatDate(date)}</Text>
-        </Space>
-      </Flex>
-    )
+      <Space align="center" size={16}>
+        <CalendarOutlined />
+        {date1 && (
+          <>
+            <Text className={styles["date-component"]}>
+              {formatDate(date1)}
+            </Text>
+            <Text className={styles["date-component"]}> - </Text>
+          </>
+        )}
+
+        {date2 && (
+          <Text className={styles["date-component"]}>{formatDate(date2)}</Text>
+        )}
+      </Space>
+    </Flex>
   );
 };

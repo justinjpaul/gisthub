@@ -38,7 +38,13 @@ export default function Event() {
     header: eventData.name,
     content: (
       <>
-        {id !== undefined && <DateComponent id={id} date={eventData.start} />}
+        {id !== undefined && (
+          <DateComponent
+            id={id}
+            date1={eventData.start}
+            date2={eventData.end}
+          />
+        )}
         {eventData.gists !== undefined && (
           <>
             <Divider />
