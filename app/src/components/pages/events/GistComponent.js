@@ -1,7 +1,7 @@
 import { Typography } from "antd";
 
 import styles from "./event.module.css";
-import { NoteCard } from "../../shared/container/NoteCard";
+import { GistCard } from "../../shared/container/GistCard";
 
 export default function GistComponent({ gists }) {
   console.log(gists);
@@ -10,8 +10,8 @@ export default function GistComponent({ gists }) {
   return (
     <>
       <Text className={styles["date-component"]}>The GIST</Text>
-      {gists[0] !== undefined && (
-        <NoteCard name="GIST" filename={gists[0].blob_key} showFile={true} />
+      {gists !== undefined && (
+        <GistCard name="GIST" gists={gists.sort((x) => -x.timestamp)} />
       )}
     </>
   );

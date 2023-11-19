@@ -3,11 +3,9 @@ import { useEffect, useState } from "react";
 import { Layout } from "antd";
 import PageLayout from "../../shared/PageLayout";
 import { fetchHelper } from "../../shared/utils";
-import { useCookies } from "react-cookie";
 
 export default function Home() {
-  const [name, setName] = useState("");
-  const [cookies, setCookie] = useCookies(["session"]);
+  const [user, setUser] = useState({});
 
   const { Header, Content } = Layout;
   const [groups, setGroups] = useState([]);
@@ -27,25 +25,24 @@ export default function Home() {
           console.log("no access page");
         });
     };
-    const userInfo = async () => {
-      fetchHelper({ url: `http://localhost:5050/api/v1/users/${cookies}` })
+    const getUserInfo = async () => {
+      fetchHelper({
+        url: `http://localhost:5050/api/v1/users/me`,
+      })
         .then((x) => {
-          setGroups(
-            x.groups.map((y) => ({
-              ...{ ...y },
-              ...{ href: `/group/${y._id}` },
-            }))
-          );
+          console.log(x);
+          setUser(x);
         })
         .catch(() => {
           console.log("no access page");
         });
     };
+    getUserInfo();
     getGroupsHelper();
   }, []);
 
   return PageLayout({
-    header: name,
-    content: <GroupContainer name={`Hi ${"you"}`} groups={groups} />,
+    header: `Hi ${user.first_name}`,
+    content: <GroupContainer name="Groups" groups={groups} />,
   });
 }

@@ -1,56 +1,64 @@
 import React, { useState } from "react";
 import {
   Card,
-  Badge,
+  Typography,
   Button,
   Modal,
   Flex,
   Space,
-  Divider,
+  Tabs,
   Collapse,
-  Panel,
 } from "antd";
 import styles from "./card.module.css";
 import { FileView } from "../fileview/FileView";
 import { DownloadOutlined, FullscreenExitOutlined } from "@ant-design/icons";
 import CardComponent from "./CardComponent";
+import { formatDate } from "../utils";
 
 // to-do add relevancy score
-export const NoteCard = ({
-  name,
-  filename,
-  relevancyScore,
-  showFile = false,
-}) => {
+export const GistCard = ({ name, gists, relevancyScore }) => {
+  const [activeTab, setActiveTab] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const handleModalOpen = () => {
     setIsModalVisible(true);
   };
 
+  const getFilename = () => {
+    return gists[activeTab].blob_key;
+  };
   const handleDownload = () => {
-    window.open(filename, "_blank");
+    window.open(getFilename(), "_blank");
   };
 
   const handleModalClose = () => {
     setIsModalVisible(false);
   };
 
-  const cardClass = `${styles["clickable-card"]} ${
-    showFile && styles["large-card"]
-  }`;
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+  };
 
+  const cardClass = `${styles["clickable-card"]} ${styles["large-card"]}`;
+
+  const { TabPane } = Tabs;
   return (
     <>
-      {showFile ? (
-        <Card className={cardClass} onClick={handleModalOpen}>
-          <CardComponent body={<FileView filename={filename} />} />
-          {/* <Card.Meta title={name} /> */}
-        </Card>
-      ) : (
-        <Card className={cardClass} onClick={handleModalOpen}>
-          <Card.Meta title={name} />
-        </Card>
-      )}
+      <Card className={cardClass}>
+        {formatDate(gists[activeTab].timestamp)}
+        <Tabs type="card" activeKey={activeTab} onChange={handleTabChange}>
+          {gists.map((item, index) => (
+            <TabPane tab={index + 1} key={index}>
+              <Card className={cardClass} onClick={handleModalOpen}>
+                <Card.Meta
+                  title={name}
+                  description={<FileView filename={getFilename()} />}
+                />
+              </Card>
+            </TabPane>
+          ))}
+        </Tabs>
+      </Card>
+
       {isModalVisible && (
         <Modal
           title={
@@ -78,7 +86,7 @@ export const NoteCard = ({
           closeIcon={null}
           width="80vw"
         >
-          <CardComponent body={<FileView filename={filename} />} />
+          <CardComponent body={<FileView filename={getFilename()} />} />
         </Modal>
       )}
     </>
