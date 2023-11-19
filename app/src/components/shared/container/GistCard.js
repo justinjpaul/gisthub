@@ -26,6 +26,10 @@ export const GistCard = ({ name, gists, relevancyScore }) => {
   const getFilename = () => {
     return gists[activeTab].blob_key;
   };
+  const getDate = () => {
+    console.log("get date", gists[activeTab]);
+    return gists[activeTab].timestamp;
+  };
   const handleDownload = () => {
     window.open(getFilename(), "_blank");
   };
@@ -44,7 +48,7 @@ export const GistCard = ({ name, gists, relevancyScore }) => {
   return (
     <>
       <Card className={cardClass}>
-        <p>{gists[activeTab].start}</p>
+        <p>{formatDate(getDate())}</p>
         <Tabs type="card" activeKey={activeTab} onChange={handleTabChange}>
           {gists.map((item, index) => (
             <TabPane tab={index + 1} key={index}>
