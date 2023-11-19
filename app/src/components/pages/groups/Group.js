@@ -7,13 +7,28 @@ import {
   inFuture,
   fetchHelper,
 } from "../../shared/utils";
-import { Divider } from "antd";
+import { Divider, Button, Modal } from "antd";
+import { FileAddOutlined } from "@ant-design/icons";
 import PageLayout from "../../shared/PageLayout";
+import EventForm from "./EventForm";
 
 export default function Group() {
   const { id } = useParams();
   const [events, setEvents] = useState([]);
   const [group, setGroup] = useState({});
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   useEffect(() => {
     if (id === undefined) {
@@ -81,6 +96,21 @@ export default function Group() {
     header: group.name !== undefined ? group.name : "",
     content: (
       <>
+        <div>
+          <Button type="primary" onClick={showModal}>
+            Add Event <FileAddOutlined />
+          </Button>
+          <Modal
+            // title="My Modal"
+            visible={isModalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={null}
+          >
+            <EventForm id={id} />
+          </Modal>
+        </div>
+        <Divider />
         <EventContainer name="Happening Now" events={getCurrent()} />
         <Divider />
         <EventContainer name="Past Events" events={getPast()} />
