@@ -3,16 +3,15 @@ import { useParams } from "react-router-dom";
 import styles from "./group.module.css";
 import pageStyles from "../../shared/pages.module.css";
 
-import { Divider } from "antd";
 import Background from "../../shared/background/Background";
 import EventContainer from "../../shared/container/EventContainer";
 import { useEffect, useState } from "react";
 import { isHappening, hasPast, inFuture } from "../../shared/utils";
-import { Layout } from "antd";
+import { Layout, Divider } from "antd";
 
 export default function Group() {
   const { id } = useParams();
-  const name = "hardcoded";
+  const name = "hardcoded group";
   const [events, setEvents] = useState([]);
   const { Header, Content } = Layout;
 

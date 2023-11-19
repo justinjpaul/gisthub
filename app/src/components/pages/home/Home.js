@@ -1,12 +1,10 @@
-import pageStyles from "../../shared/pages.module.css";
-
-import Background from "../../shared/background/Background";
 import GroupContainer from "../../shared/container/GroupContainer";
 import { useEffect, useState } from "react";
 import { Layout } from "antd";
+import PageLayout from "../../shared/PageLayout";
 
 export default function Home() {
-  const name = "hardcoded";
+  const name = "hardcoded home";
 
   const { Header, Content } = Layout;
   const [groups, setGroups] = useState([]);
@@ -32,16 +30,8 @@ export default function Home() {
     ]);
   }, []);
 
-  return (
-    <>
-      <Background />
-
-      <Layout className={pageStyles["page-container"]}>
-        <Header className={pageStyles["page-header"]}>{name}</Header>
-        <Content>
-          <GroupContainer name="Groups" groups={groups} />
-        </Content>
-      </Layout>
-    </>
-  );
+  return PageLayout({
+    header: name,
+    content: <GroupContainer name="Groups" groups={groups} />,
+  });
 }

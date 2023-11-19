@@ -19,7 +19,7 @@ export default function Event() {
   useEffect(() => {
     setEventData({
       name: "Lecture 20",
-      group: "EECS 280",
+      group: "EECS 280 hardcoded",
       start_time: new Date().getTime() - 30 * 24 * 60 * 60 * 1000, // 30 days ago
       end_time: new Date().getTime() - 29 * 24 * 60 * 60 * 1000,
       contributed: true,
