@@ -5,10 +5,10 @@ from openai import AzureOpenAI
 
 SPLIT_KEY = "****END FIRST OUTPUT****"
 STARTING_PROMPT = f"""
-    I am about to send you two sets of notes that were taken on the same topic. 
+    I am sending you two sets of notes that were taken on the same topic. 
     I want you to combine them and give me an output as a markdown file. 
     This output should capture the main idea of the notes and merge important details into one concise
-    set of notes. One of these files may be a running compilation of other notes, and this one should be given precedence.
+    set of notes. If the two notes differ drastically in topic, always prefer the first one I send.
     Begin with a 3-4 sentence summary, then continue into details. 
     """
 

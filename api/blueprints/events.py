@@ -15,7 +15,7 @@ import threading
 import um_gpt
 import relevancy
 
-MIN_RELEVANCE = 0.7
+MIN_RELEVANCE = 0.4
 
 # Create event is in Groups
 
@@ -163,7 +163,7 @@ def update_gist(event_id: ObjectId, new_note_id: ObjectId, local_filename: str):
     note_text = um_gpt.read_file(local_filename)
     merge_text = um_gpt.read_file(merge_with_filename)
 
-    messages = um_gpt.prepare_combine_query([note_text, merge_text])
+    messages = um_gpt.prepare_combine_query([merge_text, note_text])
     response = um_gpt.query_gpt(messages)
 
     # 3. parse gist -> upload to gcs
