@@ -28,6 +28,6 @@ def create_user():
 
 @users.route("/<id>", methods=["GET"])
 def get_user(id: str):
-    user = db.client["groups"].find_one({"_id": ObjectId(id)})
+    user = db.client["users"].find_one({"_id": ObjectId(id)})
     del user["password"]
     return jsonify(user)

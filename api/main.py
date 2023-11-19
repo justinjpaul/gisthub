@@ -7,6 +7,7 @@ import uuid
 
 from blueprints.groups import groups
 from blueprints.users import users
+from blueprints.events import events
 from db.db_client import db
 
 from datetime import datetime, date
@@ -42,6 +43,7 @@ def create_app():
 
     app.register_blueprint(groups, url_prefix="/api/v1/groups")
     app.register_blueprint(users, url_prefix="/api/v1/users")
+    app.register_blueprint(events, url_prefix="/api/v1/events")
 
     # Error 404 handler
     @app.errorhandler(404)

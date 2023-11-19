@@ -46,7 +46,7 @@ class Event(BaseModel):
     start: datetime
     end: Optional[datetime] = Field(default=None)
     notes: List[Note] = Field(default=[])
-    gist: List[Gist] = Field(default=[])
+    gists: List[Gist] = Field(default=[])
 
 
 class LoginInput(BaseModel):
