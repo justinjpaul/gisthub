@@ -1,0 +1,13 @@
+.group-container {
+    border-radius: 2em;
+    background-color: rgba(231, 227, 227, .95);
+}
+.group-header {
+    color: white;
+    text-align: center;
+    font-size: x-large;
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+
+    background-color:rgb(47, 159, 233);
+}

@@ -1,0 +1,8 @@
+.name {
+    /* text-transform: uppercase; */
+    font-size: xx-large;
+    margin-block-start: 0em !important;
+    padding-top: 10vh !important;
+    text-align:center;
+    color: white;
+}

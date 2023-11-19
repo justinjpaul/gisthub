@@ -1,0 +1,5 @@
+/* same size for card */
+.card {
+    /* height: 100%; */
+    box-shadow: 0 .5em 1em rgba(0, 0, 0, 0.1); 
+}
