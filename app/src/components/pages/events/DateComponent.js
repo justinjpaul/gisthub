@@ -18,7 +18,7 @@ const MyUploadButton = ({ id }) => {
 
   return (
     <Upload {...props}>
-      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+      <Button icon={<UploadOutlined />}>Add New Event</Button>
     </Upload>
   );
 };

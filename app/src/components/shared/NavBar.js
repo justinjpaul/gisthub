@@ -1,5 +1,4 @@
-import { Layout, Menu, Breadcrumb } from "antd";
-import { Link } from "react-router-dom";
+import { Layout, Button } from "antd";
 import pageStyles from "./pages.module.css";
 
 export default function NavBar({ props }) {
@@ -13,13 +12,15 @@ export default function NavBar({ props }) {
 
   return (
     <Header className={pageStyles["page-header"]}>
-      <Breadcrumb>
-        {elements.map((x, ind) => (
-          <Breadcrumb.Item key={ind}>
-            <Link to={x.to}>{x.label}</Link>
-          </Breadcrumb.Item>
-        ))}
-      </Breadcrumb>
+      <Button
+        size="large"
+        type="primary"
+        onClick={() => {
+          window.location.href = "/";
+        }}
+      >
+        GistHub
+      </Button>
     </Header>
   );
 }
