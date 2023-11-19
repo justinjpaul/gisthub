@@ -33,6 +33,7 @@ class Note(BaseModel):
     author_name: str
     object_key: str
     timestamp: datetime
+    relevance: Optional[float] = Field(default=None)
 
 
 class Gist(BaseModel):

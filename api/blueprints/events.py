@@ -4,6 +4,7 @@ from bson import ObjectId
 from db.models import Event, Note, Gist
 from db.db_client import db
 from datetime import datetime, timedelta
+from typing import Optional
 
 events = Blueprint(name="events", import_name=__name__)
 from cloud_storage import storage_client, credentials
@@ -12,6 +13,9 @@ from openai import AzureOpenAI
 import os
 import threading
 import um_gpt
+import relevancy
+
+MIN_RELEVANCE = 0.7
 
 # Create event is in Groups
 
@@ -57,6 +61,15 @@ def upload_note(event_id: str):
     f = request.files["file"]
     f.save(local_filename)
 
+    relevance = get_relevancy(local_filename, ObjectId(event_id))
+    print(relevance)
+
+    if relevance < MIN_RELEVANCE:
+        return (
+            jsonify({"error": "Your note is too unrelated to the current Gist!"}),
+            400,
+        )
+
     bucket = storage_client.bucket("gisthub-files")
 
     blob = bucket.blob(blob_name)
@@ -69,6 +82,7 @@ def upload_note(event_id: str):
         timestamp=datetime.now(),
         user_id=session["user_id"],
         author_name=session["name"],
+        relevance=relevance,
     )
 
     result = events.update_one(
@@ -88,6 +102,30 @@ def upload_note(event_id: str):
     gist_thread.start()
 
     return jsonify(requested_note.dict(by_alias=True))
+
+
+def get_relevancy(local_filename: str, event_id: ObjectId) -> Optional[float]:
+    event = Event(**db.client["events"].find_one({"_id": event_id}))
+    if len(event.gists) == 0:  # no gist yet, so we allow the file
+        return False
+
+    # there's already a gist, so we can check against it for relevancy
+    print("checking against existing gist...")
+    sorted_gists = sorted(event.gists, key=lambda x: x.timestamp, reverse=True)
+    compare_gist_key = sorted_gists[0].blob_key
+
+    print(local_filename)
+    print(compare_gist_key)
+
+    bucket = storage_client.bucket("gisthub-files")
+    blob = bucket.blob(compare_gist_key)
+    gist_filename = compare_gist_key.replace("/", "-")
+    blob.download_to_filename(gist_filename)
+
+    s1 = relevancy.read_file(local_filename)
+    s2 = relevancy.read_file(gist_filename)
+    cosine_score = relevancy.get_cosine_similarity(s1, s2)
+    return relevancy.map_cosine_score(cosine_score)
 
 
 def update_gist(event_id: ObjectId, new_note_id: ObjectId, local_filename: str):
