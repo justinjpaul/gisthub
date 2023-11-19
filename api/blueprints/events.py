@@ -62,7 +62,7 @@ def upload_note(event_id: str):
     relevance = get_relevancy(local_filename, ObjectId(event_id))
     print(relevance)
 
-    if relevance < MIN_RELEVANCE:
+    if relevance is not None and relevance < MIN_RELEVANCE:
         return (
             jsonify({"error": "Your note is too unrelated to the current Gist!"}),
             400,
@@ -105,7 +105,7 @@ def upload_note(event_id: str):
 def get_relevancy(local_filename: str, event_id: ObjectId) -> Optional[float]:
     event = Event(**db.client["events"].find_one({"_id": event_id}))
     if len(event.gists) == 0:  # no gist yet, so we allow the file
-        return False
+        return None
 
     # there's already a gist, so we can check against it for relevancy
     print("checking against existing gist...")
