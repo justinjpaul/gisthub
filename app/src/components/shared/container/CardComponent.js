@@ -8,17 +8,32 @@ import {
 } from "@ant-design/icons";
 import styles from "./card.module.css";
 
-const ProperIcon = ({ text }) => {
-  if (text === "missing contribution") {
-    return <WarningOutlined style={{ color: "orange" }} />;
-  } else if (text === "contributed") {
-    return <CheckSquareOutlined style={{ color: "green" }} />;
+const ProperIcon = ({ did_contribute }) => {
+  console.log(did_contribute);
+  if (did_contribute === false) {
+    return <WarningOutlined />;
+  } else {
+    return <CheckSquareOutlined />;
   }
-
-  return <RightOutlined />;
 };
 
-const CardComponent = ({ name, body, highlight, color, href, buttonText }) => {
+const correctColor = ({ did_contribute }) => {
+  console.log(did_contribute);
+  if (did_contribute === false) {
+    return "orange";
+  } else {
+    return "green";
+  }
+};
+
+const CardComponent = ({
+  name,
+  body,
+  highlight,
+  color,
+  href,
+  did_contribute,
+}) => {
   const handleClick = () => {
     if (href) {
       window.location.href = href;
@@ -26,13 +41,11 @@ const CardComponent = ({ name, body, highlight, color, href, buttonText }) => {
   };
 
   const cardClass = `${styles["card"]} ${href && styles["clickable-card"]}`;
-  console.log(name, href, cardClass);
-
+  console.log(name, did_contribute);
   return highlight ? (
     <Badge.Ribbon
-      // className={styles["ribbon"]}
-      text={highlight}
-      color={color}
+      text={<ProperIcon did_contribute={did_contribute} />}
+      color={correctColor({ did_contribute })}
       placement="end"
     >
       <Card className={cardClass} onClick={handleClick}>

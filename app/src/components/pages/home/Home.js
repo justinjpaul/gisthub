@@ -1,14 +1,29 @@
 import GroupContainer from "../../shared/container/GroupContainer";
 import { useEffect, useState } from "react";
-import { Layout } from "antd";
+import { Button, Modal, Divider } from "antd";
 import PageLayout from "../../shared/PageLayout";
 import { fetchHelper } from "../../shared/utils";
+import { PlusCircleOutlined } from "@ant-design/icons";
+import GroupForm from "./GroupForm";
 
 export default function Home() {
   const [user, setUser] = useState({});
 
-  const { Header, Content } = Layout;
   const [groups, setGroups] = useState([]);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   useEffect(() => {
     const getGroupsHelper = async () => {
@@ -43,6 +58,25 @@ export default function Home() {
 
   return PageLayout({
     header: `Hi ${user.first_name}`,
-    content: <GroupContainer name="Groups" groups={groups} />,
+    content: (
+      <>
+        <div>
+          <Button onClick={showModal}>
+            Join Group <PlusCircleOutlined />
+          </Button>
+          <Modal
+            // title="My Modal"
+            visible={isModalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={null}
+          >
+            <GroupForm onSubmit={handleCancel} />
+          </Modal>
+        </div>
+        <Divider />
+        <GroupContainer name="Groups" groups={groups} />
+      </>
+    ),
   });
 }

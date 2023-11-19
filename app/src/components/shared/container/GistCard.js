@@ -44,7 +44,7 @@ export const GistCard = ({ name, gists, relevancyScore }) => {
   return (
     <>
       <Card className={cardClass}>
-        {formatDate(gists[activeTab].timestamp)}
+        <p>{gists[activeTab].start}</p>
         <Tabs type="card" activeKey={activeTab} onChange={handleTabChange}>
           {gists.map((item, index) => (
             <TabPane tab={index + 1} key={index}>

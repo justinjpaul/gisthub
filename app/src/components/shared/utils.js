@@ -4,7 +4,7 @@ export const isHappening = (startTime, endTime) => {
   }
   let currentTime = new Date().getTime();
 
-  return startTime <= currentTime && currentTime <= endTime;
+  return Date(startTime) <= currentTime && currentTime <= Date(endTime);
 };
 
 export const hasPast = (endTime) => {
@@ -13,7 +13,7 @@ export const hasPast = (endTime) => {
   }
   let currentTime = new Date().getTime();
 
-  return endTime <= currentTime;
+  return Date(endTime) >= Date(currentTime);
 };
 
 export const inFuture = (startTime, endTime) => {

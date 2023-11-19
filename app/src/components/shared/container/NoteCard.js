@@ -39,13 +39,40 @@ export const NoteCard = ({
     showFile && styles["large-card"]
   }`;
 
+  const correctText = () => {
+    if (relevancyScore > 0.7) {
+      return "Great!";
+    }
+    if (relevancyScore > 0.4) {
+      return "Mid";
+    }
+    return "Needs Work";
+  };
+
+  const correctColor = () => {
+    if (relevancyScore > 0.7) {
+      return "green";
+    }
+    if (relevancyScore > 0.4) {
+      return "yellow";
+    }
+    return "red";
+  };
+
+  console.log(relevancyScore);
+
   return (
     <>
-      {showFile ? (
-        <Card className={cardClass} onClick={handleModalOpen}>
-          <CardComponent body={<FileView filename={filename} />} />
-          {/* <Card.Meta title={name} /> */}
-        </Card>
+      {relevancyScore !== undefined && relevancyScore !== null ? (
+        <Badge.Ribbon
+          text={correctText()}
+          color={correctColor()}
+          placement="end"
+        >
+          <Card className={cardClass} onClick={handleModalOpen}>
+            <Card.Meta title={name} />
+          </Card>
+        </Badge.Ribbon>
       ) : (
         <Card className={cardClass} onClick={handleModalOpen}>
           <Card.Meta title={name} />

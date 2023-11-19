@@ -66,7 +66,7 @@ export default function Group() {
     return events
       .filter((x) => isHappening(x.start, x.end))
       .map((x) => ({
-        ...{ ...x, ...{ href: `/event/${x._id}`, buttonText: "contribute" } },
+        ...{ ...x, ...{ href: `/event/${x._id}`, highlight: true } },
       }));
   };
   const getPast = () => {
@@ -77,9 +77,7 @@ export default function Group() {
           ...x,
           ...{
             href: `/event/${x._id}`,
-            buttonText: x.did_contribute
-              ? "contributed"
-              : "missing contribution",
+            highlight: true,
           },
         },
       }));
@@ -88,7 +86,7 @@ export default function Group() {
     return events
       .filter((x) => inFuture(x.start, x.end))
       .map((x) => ({
-        ...{ ...x, ...{ href: `/event/${x._id}`, buttonText: "view" } },
+        ...{ ...x, ...{ href: `/event/${x._id}`, highlight: true } },
       }));
   };
 
@@ -97,7 +95,7 @@ export default function Group() {
     content: (
       <>
         <div>
-          <Button type="primary" onClick={showModal}>
+          <Button onClick={showModal}>
             Add Event <FileAddOutlined />
           </Button>
           <Modal
@@ -107,7 +105,7 @@ export default function Group() {
             onCancel={handleCancel}
             footer={null}
           >
-            <EventForm id={id} />
+            <EventForm id={id} onSubmit={handleCancel} />
           </Modal>
         </div>
         <Divider />

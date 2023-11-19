@@ -15,7 +15,11 @@ export default function DetailsContainer({ name, notes }) {
             console.log(card);
             return (
               <Col key={index} span={8}>
-                <NoteCard name={card.author_name} filename={card.object_key} />
+                <NoteCard
+                  name={card.author_name}
+                  filename={card.object_key}
+                  relevancyScore={card.relevance}
+                />
               </Col>
             );
           })}
