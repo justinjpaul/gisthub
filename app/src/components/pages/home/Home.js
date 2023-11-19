@@ -1,13 +1,14 @@
-import styles from "./home.module.css";
 import pageStyles from "../../shared/pages.module.css";
 
 import Background from "../../shared/background/Background";
 import GroupContainer from "../../shared/container/GroupContainer";
 import { useEffect, useState } from "react";
+import { Layout } from "antd";
 
 export default function Home() {
   const name = "hardcoded";
 
+  const { Header, Content } = Layout;
   const [groups, setGroups] = useState([]);
 
   useEffect(() => {
@@ -35,13 +36,12 @@ export default function Home() {
     <>
       <Background />
 
-      <div className={pageStyles["page-container"]}>
-        {/* insert typing animation later */}
-        <h1 className={styles["name"]}>Hi {name} </h1>
-        <br />
-        <br />
-        <GroupContainer name="Groups" groups={groups} />
-      </div>
+      <Layout className={pageStyles["page-container"]}>
+        <Header className={pageStyles["page-header"]}>{name}</Header>
+        <Content>
+          <GroupContainer name="Groups" groups={groups} />
+        </Content>
+      </Layout>
     </>
   );
 }

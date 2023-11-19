@@ -8,11 +8,13 @@ import Background from "../../shared/background/Background";
 import EventContainer from "../../shared/container/EventContainer";
 import { useEffect, useState } from "react";
 import { isHappening, hasPast, inFuture } from "../../shared/utils";
+import { Layout } from "antd";
 
 export default function Group() {
   const { id } = useParams();
   const name = "hardcoded";
   const [events, setEvents] = useState([]);
+  const { Header, Content } = Layout;
 
   useEffect(() => {
     setEvents([
@@ -79,16 +81,16 @@ export default function Group() {
     <>
       <Background />
 
-      <div className={pageStyles["page-container"]}>
-        {/* insert typing animation later */}
-        <h1 className={styles["name"]}>{name} </h1>
-        <Divider />
-        <EventContainer name="Happening Now" events={getCurrent()} />
-        <Divider />
-        <EventContainer name="Past Events" events={getPast()} />
-        <Divider />
-        <EventContainer name="Upcoming Events" events={getFuture()} />
-      </div>
+      <Layout className={pageStyles["page-container"]}>
+        <Header className={pageStyles["page-header"]}>{name}</Header>
+        <Content>
+          <EventContainer name="Happening Now" events={getCurrent()} />
+          <Divider />
+          <EventContainer name="Past Events" events={getPast()} />
+          <Divider />
+          <EventContainer name="Upcoming Events" events={getFuture()} />
+        </Content>
+      </Layout>
     </>
   );
 }
