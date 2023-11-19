@@ -13,7 +13,7 @@ function App() {
         <Routes>
           {/* <Route path="/login" element={<login />} /> */}
           <Route path="/" element={<Home />} />
-          <Route path="event/:name" element={<Group />} />
+          <Route path="group/:name" element={<Group />} />
           <Route path="event/:name" element={<Event />} />
           <Route path="/*" element={<NotFound />} />
         </Routes>
