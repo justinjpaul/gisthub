@@ -15,6 +15,7 @@ def create_group():
     body = request.get_json()
     body["owner_id"] = session["user_id"]
     requested_group = Group(**body)
+    requested_group.user_ids.append(session["user_id"])
 
     new_group = db.client["groups"].insert_one(requested_group.dict(by_alias=True))
     created_group = db.client["groups"].find_one({"_id": new_group.inserted_id})
@@ -26,6 +27,16 @@ def create_group():
 def get_group(id: str):
     group = db.client["groups"].find_one({"_id": ObjectId(id)})
     return jsonify(group)
+
+
+# get all groups the LOGGED IN USER belongs to
+@groups.route("/", methods=["GET"])
+def get_groups():
+    if not session.get("user_id"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    groups = list(db.client["groups"].find({"user_ids": {"$in": [session["user_id"]]}}))
+    return jsonify({"groups": groups})
 
 
 @groups.route("/<group_id>/events", methods=["POST"])
@@ -81,3 +92,25 @@ def get_events(group_id: str):
         resp.append(serialized_event)
 
     return jsonify({"events": resp})
+
+
+@groups.route("/<group_id>/join", methods=["POST"])
+def join_group(group_id: str):
+    if not session.get("user_id"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    curr_groups = list(
+        db.client["groups"].find({"user_ids": {"$in": [session["user_id"]]}})
+    )
+    for g in curr_groups:
+        if g["_id"] == ObjectId(group_id):
+            return jsonify({"error": "User already in group"}), 400
+
+    result = db.client["groups"].update_one(
+        {"_id": ObjectId(group_id)}, {"$push": {"user_ids": session["user_id"]}}
+    )
+
+    if result.modified_count == 0:
+        return jsonify({"error": "Unable to add user to group"}), 500
+
+    return jsonify({}), 200

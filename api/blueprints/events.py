@@ -9,8 +9,6 @@ from typing import Optional
 events = Blueprint(name="events", import_name=__name__)
 from cloud_storage import storage_client, credentials
 import time
-from openai import AzureOpenAI
-import os
 import threading
 import um_gpt
 import relevancy
