@@ -1,6 +1,6 @@
 import json
 
-from flask import Blueprint, jsonify, request, g
+from flask import Blueprint, jsonify, request, g, session
 from pydantic import BaseModel, validator, Extra, ValidationError
 from bson import ObjectId
 
@@ -29,5 +29,15 @@ def create_user():
 @users.route("/<id>", methods=["GET"])
 def get_user(id: str):
     user = db.client["users"].find_one({"_id": ObjectId(id)})
+    del user["password"]
+    return jsonify(user)
+
+
+@users.route("/me", methods=["GET"])
+def get_me():
+    if not session.get("user_id"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    user = db.client["users"].find_one({"_id": ObjectId(session["user_id"])})
     del user["password"]
     return jsonify(user)
