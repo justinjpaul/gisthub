@@ -6,6 +6,6 @@ ENV PATH /app/node_modules/.bin:$PATH
 
 COPY . ./
 
-RUN npm install -g --silent
+RUN npm install --silent
 
 CMD ["npm", "start"]
