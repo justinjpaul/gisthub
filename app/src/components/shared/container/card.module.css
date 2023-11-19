@@ -2,4 +2,14 @@
 .card {
     /* height: 100%; */
     box-shadow: 0 .5em 1em rgba(0, 0, 0, 0.1); 
+    cursor:auto;
+}
+
+.clickable-card:hover {
+    cursor:pointer !important;
+}
+
+.large-card {
+    max-height: 50vh;
+    overflow:auto;
 }

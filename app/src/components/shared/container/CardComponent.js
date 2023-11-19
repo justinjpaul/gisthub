@@ -19,6 +19,15 @@ const ProperIcon = ({ text }) => {
 };
 
 const CardComponent = ({ name, body, highlight, color, href, buttonText }) => {
+  const handleClick = () => {
+    if (href) {
+      window.location.href = href;
+    }
+  };
+
+  const cardClass = `${styles["card"]} ${href && styles["clickable-card"]}`;
+  console.log(name, href, cardClass);
+
   return highlight ? (
     <Badge.Ribbon
       // className={styles["ribbon"]}
@@ -26,40 +35,12 @@ const CardComponent = ({ name, body, highlight, color, href, buttonText }) => {
       color={color}
       placement="end"
     >
-      <Card
-        className={styles["card"]}
-        actions={
-          href && [
-            <Button
-              key="button"
-              type="link"
-              // className={styles.button}
-              href={href}
-            >
-              {buttonText} <ProperIcon text={buttonText} />
-            </Button>,
-          ]
-        }
-      >
+      <Card className={cardClass} onClick={handleClick}>
         <Card.Meta title={name} description={body} />
       </Card>
     </Badge.Ribbon>
   ) : (
-    <Card
-      className={styles["card"]}
-      actions={
-        href && [
-          <Button
-            key="button"
-            type="link"
-            // className={styles.button}
-            href={href}
-          >
-            {buttonText} <ProperIcon text={buttonText} />
-          </Button>,
-        ]
-      }
-    >
+    <Card className={cardClass} onClick={handleClick}>
       <Card.Meta title={name} description={body} />
     </Card>
   );
