@@ -6,6 +6,8 @@ from db.db_client import db
 from datetime import datetime
 
 events = Blueprint(name="events", import_name=__name__)
+from cloud_storage import storage_client
+import time
 
 # Create event is in Groups
 
@@ -22,12 +24,17 @@ def upload_note(event_id: str):
         return jsonify({"error": "Unauthorized"}), 401
 
     f = request.files["file"]
-    f.save(f.filename)
+    f.save("tmp.txt")
+
+    bucket = storage_client.bucket("gisthub-files")
+    blob_name = f"{session['user_id']}/{int(time.time())}.txt"
+    blob = bucket.blob(blob_name)
+    blob.upload_from_filename("tmp.txt")
 
     events = db.client["events"]
 
     requested_note = Note(
-        object_key=f.filename, timestamp=datetime.now(), user_id=session["user_id"]
+        object_key=blob_name, timestamp=datetime.now(), user_id=session["user_id"]
     )
 
     result = events.update_one(

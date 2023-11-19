@@ -18,6 +18,7 @@ from fixed_session import FixedSession
 
 from db.models import LoginInput, User
 import bcrypt
+from cloud_storage import storage_client
 
 
 class MongoJSONEncoder(JSONEncoder):
