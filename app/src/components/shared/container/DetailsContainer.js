@@ -3,7 +3,7 @@ import styles from "./container.module.css";
 import { Layout, Row, Col } from "antd";
 import { NoteCard } from "./NoteCard";
 
-export default function EventContainer({ name, notes }) {
+export default function DetailsContainer({ name, notes }) {
   const { Header, Content } = Layout;
 
   return (
