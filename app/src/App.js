@@ -14,8 +14,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<Landing />} />
           <Route path="/" element={<Home />} />
-          <Route path="group/:name" element={<Group />} />
-          <Route path="event/:name" element={<Event />} />
+          <Route path="group/:id" element={<Group />} />
+          <Route path="event/:id" element={<Event />} />
           <Route path="/*" element={<NotFound />} />
         </Routes>
       </Router>

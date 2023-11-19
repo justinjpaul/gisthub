@@ -128,7 +128,7 @@ def create_app():
 
 
 app = create_app()
-CORS(app)
+CORS(app, supports_credentials=True)
 db.connect()
 
 app.config["SESSION_PERMANENT"] = True  # this is flipped/broken lol

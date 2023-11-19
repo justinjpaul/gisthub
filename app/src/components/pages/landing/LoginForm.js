@@ -13,7 +13,6 @@ export default function LoginForm() {
       .then((window.location.href = "/"))
       .catch(console.log("nah bro"));
   };
-
   const validateMessages = {
     required: "${label} is required!",
     types: {

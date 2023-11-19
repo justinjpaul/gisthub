@@ -18,7 +18,7 @@ export const NoteCard = ({
   };
 
   const handleDownload = () => {
-    console.log("implement download later");
+    window.open(filename, "_blank");
   };
 
   const handleModalClose = () => {

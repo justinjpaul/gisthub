@@ -8,9 +8,19 @@ export const useGetFileContent = (filename) => {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const response = await fetch(filename); // Use the provided filename
+        const response = await fetch(filename, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            // referrer: "no-referrer",
+          },
+          method: "GET",
+          credentials: "same-origin",
+        }); // Use the provided filename
+
         const text = await response.text();
         setContent(text);
+        console.log(text);
       } catch (error) {
         console.error("Error fetching content:", error);
       }
@@ -25,7 +35,11 @@ export const useGetFileContent = (filename) => {
 export const FileView = ({ filename }) => {
   const content = useGetFileContent(filename);
   const fileExt =
-    filename !== undefined ? filename.slice(filename.lastIndexOf(".") + 1) : "";
+    filename !== undefined
+      ? filename
+          .split("?")[0]
+          .slice(filename.split("?")[0].lastIndexOf(".") + 1)
+      : "";
 
   return (
     <>

@@ -35,6 +35,7 @@ export const formatDate = (datetime) => {
 export async function fetchHelper({
   url,
   method = "GET",
+  credentials = "include",
   headers = {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json",
@@ -44,6 +45,8 @@ export async function fetchHelper({
   console.log(body);
   try {
     const response = await fetch(url, {
+      credentials: credentials,
+      // mode: "no-cors",
       method: method,
       headers: headers,
       body: body ? JSON.stringify(body) : null,
@@ -52,7 +55,6 @@ export async function fetchHelper({
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    console.log(response);
     const responseData = await response.json();
     return responseData;
   } catch (error) {
@@ -61,3 +63,7 @@ export async function fetchHelper({
     throw error;
   }
 }
+
+export const formatName = (name) => {
+  return `${name}'s`;
+};
