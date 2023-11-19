@@ -19,3 +19,14 @@ export const hasPast = (endTime) => {
 export const inFuture = (startTime, endTime) => {
   return !isHappening(startTime, endTime) && !hasPast(endTime);
 };
+
+export const formatDate = (datetime) => {
+  const date = new Date(datetime);
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+
+  return formattedDate;
+};
