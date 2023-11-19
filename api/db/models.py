@@ -9,13 +9,14 @@ class User(BaseModel):
     first_name: str
     last_name: str
     email: str
-    password_hash: str
+    password: str
 
 
 class Group(BaseModel):
     _id: str = Field(default_factory=uuid.uuid4)
     name: str
-    users: List[User] = Field(default=[])
+    user_ids: List[str] = Field(default=[])
+    owner_id: str
     event_ids: List[str] = Field(default=[])
 
 
@@ -39,3 +40,8 @@ class Event(BaseModel):
     end: Optional[datetime] = Field(default=None)
     notes: List[Note] = Field(default=[])
     gist: List[Gist] = Field(default=[])
+
+
+class LoginInput(BaseModel):
+    email: str
+    password: str

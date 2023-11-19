@@ -1,17 +1,22 @@
 import os
-from flask import Flask, jsonify, Response, g, request
+from flask import Flask, jsonify, Response, g, request, session
 import config
 import json
 import time
 import uuid
 
 from blueprints.groups import groups
+from blueprints.users import users
 from db.db_client import db
 
 from datetime import datetime, date
 from bson import ObjectId
 from flask.json import JSONEncoder
 from werkzeug.routing import BaseConverter
+from fixed_session import FixedSession
+
+from db.models import LoginInput
+import bcrypt
 
 
 class MongoJSONEncoder(JSONEncoder):
@@ -36,6 +41,7 @@ def create_app():
     app.url_map.converters["objectid"] = ObjectIdConverter
 
     app.register_blueprint(groups, url_prefix="/api/v1/groups")
+    app.register_blueprint(users, url_prefix="/api/v1/users")
 
     # Error 404 handler
     @app.errorhandler(404)
@@ -58,7 +64,7 @@ def create_app():
         # start with the correct headers and status code from the error
         response = Response()
         # replace the body with JSON
-        response.response = json.dumps({"msg": str(e)})
+        response.data = json.dumps({"msg": str(e)})
         response.content_type = "application/json"
         response.status = 500
         return response
@@ -73,6 +79,26 @@ def create_app():
     @app.route("/ping")
     def hello_world():
         return "pong"
+
+    @app.route("/api/v1/login", methods=["POST"])
+    def login():
+        login_request = LoginInput(**request.get_json())
+        user = db.client["users"].find_one({"email": login_request.email})
+        if user:
+            if bcrypt.checkpw(
+                login_request.password.encode(), user["password"].encode()
+            ):
+                session["user_id"] = user["_id"]
+                return jsonify(user), 200
+            else:
+                return jsonify({"error": "Invalid password"}), 400
+        else:
+            return jsonify({"error": "Invalid username"}), 400
+
+    @app.route("/api/v1/logout", methods=["POST"])
+    def logout():
+        del session["user_id"]
+        return jsonify({}), 200
 
     @app.before_request
     def before_request_func():
@@ -99,6 +125,13 @@ def create_app():
 
 app = create_app()
 db.connect()
+
+app.config["SESSION_PERMANENT"] = True  # this is flipped/broken lol
+app.config["SESSION_TYPE"] = "mongodb"
+app.config["SESSION_MONGODB"] = db.client
+app.config["SESSION_MONGODB_DB"] = "mhacks"
+app.config["SESSION_MONGODB_COLLECTION"] = "sessions"
+FixedSession(app)
 
 if __name__ == "__main__":
     app = create_app()
