@@ -7,3 +7,4 @@ pydantic==1.10.6
 pymongo[srv]
 bcrypt
 flask-session==0.5.0
+google-cloud-storage
