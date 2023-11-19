@@ -37,7 +37,7 @@ class Note(BaseModel):
 
 class Gist(BaseModel):
     id: ObjectId = Field(default_factory=ObjectId, alias="_id")
-    object_key: str
+    blob_key: str
     timestamp: datetime
 
 

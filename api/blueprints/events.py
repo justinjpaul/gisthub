@@ -80,10 +80,11 @@ def upload_note(event_id: str):
 
 
 def update_gist(event_id: ObjectId, new_note_id: ObjectId, local_filename: str):
+    bucket = storage_client.bucket("gisthub-files")
     # 1. pull current gist OR first note to merge
     event = Event(**db.client["events"].find_one({"_id": event_id}))
 
-    merge_with_filename = ""
+    merge_with_object_key = ""
     if len(event.gists) == 0:  # no gist yet, check if there's enough notes to merge
         print("no gist yet... generating new")
 
@@ -95,34 +96,46 @@ def update_gist(event_id: ObjectId, new_note_id: ObjectId, local_filename: str):
             event.notes[1] if event.notes[0].id == new_note_id else event.notes[0]
         )
 
-        bucket = storage_client.bucket("gisthub-files")
-        blob = bucket.blob(other_note.object_key)
-        merge_with_filename = other_note.object_key.replace("/", "-")
+        merge_with_object_key = other_note.object_key
 
     else:  # there's already a gist, so we merge with it
         print("merging with existing gist...")
         sorted_gists = sorted(event.gists, key=lambda x: x.timestamp, reverse=True)
-        merge_with_filename = sorted_gists[0].object_key
+        merge_with_object_key = sorted_gists[0].blob_key
 
     print(local_filename)
-    print(merge_with_filename)
+    print(merge_with_object_key)
+
+    blob = bucket.blob(merge_with_object_key)
+    merge_with_filename = merge_with_object_key.replace("/", "-")
+    blob.download_to_filename(merge_with_filename)
 
     # 2. send gpt prompt w/ log + new note
-
-    blob.download_to_filename(merge_with_filename)
     note_text = um_gpt.read_file(local_filename)
     merge_text = um_gpt.read_file(merge_with_filename)
 
     messages = um_gpt.prepare_combine_query([note_text, merge_text])
     response = um_gpt.query_gpt(messages)
-    x = response.choices[0]
-    summary = um_gpt.read_gpt_multi_output(x)
-    print(summary)
-
-    # um_gpt.create_file("summary.md", summary)
 
     # 3. parse gist -> upload to gcs
+    gist_raw = response.choices[0]
+
+    gist_content = um_gpt.read_gpt_multi_output(gist_raw)
+    print(gist_content)
+
+    gist_blob_key = f"gists/{str(event_id)}/{int(time.time())}.md"
+    gist_local_file = gist_blob_key.replace("/", "-")
+    um_gpt.create_file(gist_local_file, gist_content)
+    blob = bucket.blob(gist_blob_key)
+    blob.upload_from_filename(gist_local_file)
 
     # 4. create new Gist object and push to document
+    gist = Gist(blob_key=gist_blob_key, timestamp=datetime.now())
 
-    ...
+    result = db.client["events"].update_one(
+        {"_id": event_id},
+        {"$push": {"gists": gist.dict(by_alias=True)}},
+    )
+
+    if result.modified_count == 0:
+        print("Couldn't update event with new gist")
